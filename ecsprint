@@ -11,7 +11,7 @@ def main(args):
   ssh = subprocess.Popen(['ssh', '-T', args.host], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 
   # print files. -r removes them afterwards
-  cmd = 'lpr -P %s -r %s' % (args.P, args.file)
+  cmd = 'cd ~/.ecsprint; lpr -P %s -r %s' % (args.P, args.file)
   # cmd = 'echo "%s"' % cmd #DEBUG ONLY
   output = ssh.communicate(cmd)
 
