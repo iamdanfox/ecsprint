@@ -5,13 +5,13 @@ import sys, argparse, os, subprocess
 def main(args):
   
   # copy files recursively to remote host. NB. will fail if password required.
-  os.system('scp -r %s %s:~/.ecsprint' % (args.file, args.host))
+  os.system('scp -r %s %s:~/.ecsprint-%s' % (args.file, args.host, args.file))
 
   # connect to remote
   ssh = subprocess.Popen(['ssh', '-T', args.host], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 
   # print files. -r removes them afterwards
-  cmd = 'cd ~/.ecsprint; lpr -P %s -r %s' % (args.P, args.file)
+  cmd = 'lpr -P %s ~/.ecsprint-%s -r ' % (args.P, args.file)
   # cmd = 'echo "%s"' % cmd #DEBUG ONLY
   output = ssh.communicate(cmd)
 
@@ -20,7 +20,7 @@ def main(args):
 
 # Standard boilerplate to call the main() function to begin the program
 if __name__ == '__main__':
-  parser = argparse.ArgumentParser(prog=sys.argv[0], description = "Remote printing over ssh" )
+  parser = argparse.ArgumentParser( description = "Remote printing over ssh" )
 
   parser.add_argument(
                       "host",
@@ -33,7 +33,7 @@ if __name__ == '__main__':
                       metavar="pname")
   parser.add_argument(
                       "file",
-                      help="File(s) to print.")
+                      help="File to print.")
 
   # print usage if called with no arguments
   if len(sys.argv)==1:
