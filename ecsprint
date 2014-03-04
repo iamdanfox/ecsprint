@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+
+import sys, argparse, os, subprocess
+
+def main(args):
+  
+  # copy files recursively to remote host. NB. will fail if password required.
+  os.system('scp -r %s %s:~/.ecsprint' % (args.file, args.host))
+
+  # connect to remote
+  ssh = subprocess.Popen(['ssh', '-T', args.host], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+
+  # print files. -r removes them afterwards
+  cmd = 'lpr -P %s -r %s' % (args.P, args.file)
+  # cmd = 'echo "%s"' % cmd #DEBUG ONLY
+  output = ssh.communicate(cmd)
+
+  # display stdout from remote
+  print(output[0].decode("utf-8"))
+
+# Standard boilerplate to call the main() function to begin the program
+if __name__ == '__main__':
+  parser = argparse.ArgumentParser(prog=sys.argv[0], description = "Remote printing over ssh" )
+
+  parser.add_argument(
+                      "host",
+                      help = "Remote host to ssh into. e.g. m11dtf@ecs.ox.ac.uk (NB. password prompt for ssh will fail)",
+                      metavar = "user@hostname")
+  parser.add_argument(
+                      "-P",
+                      default="mfp0hdup",
+                      help="Destination printer. e.g. mfp0 (near the social area), or tp1hdup (in the Thom Lab)",
+                      metavar="pname")
+  parser.add_argument(
+                      "file",
+                      help="File(s) to print.")
+
+  # print usage if called with no arguments
+  if len(sys.argv)==1:
+    parser.print_help()
+    sys.exit(1)
+  else:
+    args = parser.parse_args()
+    main(args)
