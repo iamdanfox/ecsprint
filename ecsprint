@@ -5,7 +5,7 @@ import sys, argparse, os, subprocess
 def main(args):
   
   # copy files recursively to remote host. NB. will fail if password required.
-  os.system('scp -r %s %s:~/.ecsprint-%s' % (args.file, args.host, args.file))
+  os.system('scp %s %s:~/.ecsprint-%s' % (args.file, args.host, args.file)) # TODO: allow directory copying with -r
 
   # connect to remote
   ssh = subprocess.Popen(['ssh', '-T', args.host], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
